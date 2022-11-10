@@ -1,3 +1,4 @@
+const { ObjectID } = require("bson");
 const conn = require("./conn");
 const DATABASE = "SteamOrt";
 const GAMES = "Games";
@@ -11,6 +12,16 @@ async function getAllGames() {
     .toArray();
 
   return games;
+}
+
+async function getGameById(id) {
+  const connectiondb = await conn.getConnection();
+  const game = await connectiondb
+    .db(DATABASE)
+    .collection(GAMES)
+    .find({ _id: new ObjectID(`${id}`) })
+    .toArray();
+  return game[0];
 }
 
 async function getGameByPlatform(platform) {
@@ -75,4 +86,5 @@ module.exports = {
   getGameByPlatform,
   getGameByCategory,
   getGameByGenre,
+  getGameById,
 };

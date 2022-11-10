@@ -20,5 +20,9 @@ router.get("/gamesByGenre/:genre", async (req, res) => {
   const genre = req.params.genre;
   res.json(await controller.getGameByGenre(genre));
 });
+router.get("/gamesById/:id", async (req, res) => {
+  const id = req.params.id;
+  res.json(await controller.getGameById(id));
+});
 
 module.exports = router;
