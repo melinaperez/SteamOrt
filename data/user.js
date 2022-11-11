@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const { json } = require("express");
 const conn = require("./conn");
 const DATABASE = "SteamOrt";
 const USER = "Users";
@@ -39,13 +40,33 @@ async function addPurchase(email, game) {
   const user = await connectiondb
     .db(DATABASE)
     .collection(USER)
-    .findOneAndUpdate({ email: email }, { $push: { purchases: game } });
+    .findOneAndUpdate(
+      { email: email },
+      { $push: { purchases: { game, vecesJugadas: 0 } } }
+    );
 
   return user;
+}
+
+async function playGame(email, gameName) {
+  const connectiondb = await conn.getConnection();
+  const user = await connectiondb
+    .db(DATABASE)
+    .collection(USER)
+    .findOne({ email: email });
+
+  user.purchases.find((purchase) => purchase.game.name == gameName)
+    .vecesJugadas++;
+
+  return await connectiondb
+    .db(DATABASE)
+    .collection(USER)
+    .replaceOne({ email: email }, user);
 }
 
 module.exports = {
   addUser,
   findUser,
   addPurchase,
+  playGame,
 };

@@ -27,11 +27,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/addPurchase", async (req, res) => {
+router.put("/addPurchase", async (req, res) => {
   const email = req.body.email;
   const game = req.body.game; //Si se complica especifica info es por aca
+
   const purchase = await controller.addPurchase(email, game);
 
   res.status(200).json(purchase);
+});
+router.put("/playGame", async (req, res) => {
+  const email = req.body.email;
+  const gameName = req.body.gameName;
+
+  res.json(await controller.playGame(email, gameName));
 });
 module.exports = router;
