@@ -3,18 +3,23 @@ var router = express.Router();
 const controller = require("../controllers/user");
 
 router.post("/register", async (req, res) => {
-  const { nombre, apellido, email, password } = req.body;
-  const user = {
-    nombre: nombre,
-    apellido: apellido,
-    email: email,
-    password: password,
-    purchases: [],
-  };
+  try {
+    const { nombre, apellido, email, password } = req.body;
+    const user = {
+      nombre: nombre,
+      apellido: apellido,
+      email: email,
+      password: password,
+      purchases: [],
+    };
 
-  const result = await controller.addUser(user);
-  res.status(201).json(result);
+    const result = await controller.addUser(user);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 });
+
 router.post("/login", async (req, res) => {
   try {
     const user = await controller.findUser(req.body.email, req.body.password);

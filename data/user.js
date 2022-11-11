@@ -1,10 +1,14 @@
 const bcrypt = require("bcryptjs");
-const { json } = require("express");
 const conn = require("./conn");
 const DATABASE = "SteamOrt";
 const USER = "Users";
 
 async function addUser(user) {
+  const email = user.email;
+
+  if (await findByEmail(email)) {
+    throw new Error("El email ya fue registrado");
+  }
   user.password = await bcrypt.hash(user.password, 8);
   const connectiondb = await conn.getConnection();
   const infoAdd = await connectiondb
@@ -12,6 +16,15 @@ async function addUser(user) {
     .collection(USER)
     .insertOne(user);
   return infoAdd;
+}
+
+async function findByEmail(email) {
+  const connectiondb = await conn.getConnection();
+  const user = await connectiondb
+    .db(DATABASE)
+    .collection(USER)
+    .findOne({ email: email });
+  return user;
 }
 
 async function findUser(email, password) {
