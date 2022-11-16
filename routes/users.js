@@ -5,6 +5,7 @@ const controller = require("../controllers/user");
 router.post("/register", async (req, res) => {
   try {
     const { nombre, apellido, email, password } = req.body;
+
     const user = {
       nombre: nombre,
       apellido: apellido,
@@ -17,6 +18,7 @@ router.post("/register", async (req, res) => {
     res.status(201).json(result);
   } catch (error) {
     res.status(400).send(error.message);
+    console.log(error.message);
   }
 });
 

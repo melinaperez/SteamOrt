@@ -4,11 +4,21 @@ const DATABASE = "SteamOrt";
 const USER = "Users";
 
 async function addUser(user) {
+  console.log(user);
+  if (
+    user.nombre == "" ||
+    user.apellido == "" ||
+    user.email == "" ||
+    user.password == ""
+  ) {
+    throw new Error("Todos los campos son requeridos");
+  }
   const email = user.email;
 
   if (await findByEmail(email)) {
     throw new Error("El email ya fue registrado");
   }
+
   user.password = await bcrypt.hash(user.password, 8);
   const connectiondb = await conn.getConnection();
   const infoAdd = await connectiondb
