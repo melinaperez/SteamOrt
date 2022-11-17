@@ -77,14 +77,16 @@ async function playGame(email, gameName) {
     .db(DATABASE)
     .collection(USER)
     .findOne({ email: email });
-
-  user.purchases.find((purchase) => purchase.game.name == gameName)
-    .vecesJugadas++;
-
-  return await connectiondb
-    .db(DATABASE)
-    .collection(USER)
-    .replaceOne({ email: email }, user);
+  if (user.purchases.length != 0) {
+    user.purchases.find((purchase) => purchase.game.name == gameName)
+      .vecesJugadas++;
+    return await connectiondb
+      .db(DATABASE)
+      .collection(USER)
+      .replaceOne({ email: email }, user);
+  } else {
+    throw new Error("El usuario no posee juegos");
+  }
 }
 
 module.exports = {

@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const controller = require("../controllers/user");
+const { auth } = require("../middleware/auth");
 
 router.post("/register", async (req, res) => {
   try {
@@ -17,7 +18,7 @@ router.post("/register", async (req, res) => {
     const result = await controller.addUser(user);
     res.status(201).json(result);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).send({ error: error.message });
     console.log(error.message);
   }
 });
@@ -30,22 +31,26 @@ router.post("/login", async (req, res) => {
     res.send({ user, token });
   } catch (error) {
     console.log(error);
-    res.status(401).send(error.message);
+    res.status(401).send({ error: error.message });
   }
 });
 
-router.put("/addPurchase", async (req, res) => {
+router.put("/addPurchase", auth, async (req, res) => {
   const email = req.body.email;
-  const game = req.body.game; //Si se complica especifica info es por aca
+  const game = req.body.game; //Si se complica especificar info es por aca
 
   const purchase = await controller.addPurchase(email, game);
 
   res.status(200).json(purchase);
 });
-router.put("/playGame", async (req, res) => {
-  const email = req.body.email;
-  const gameName = req.body.gameName;
+router.put("/playGame", auth, async (req, res) => {
+  try {
+    const email = req.body.email;
+    const gameName = req.body.gameName;
 
-  res.json(await controller.playGame(email, gameName));
+    res.json(await controller.playGame(email, gameName));
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 });
 module.exports = router;

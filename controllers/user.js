@@ -1,5 +1,8 @@
 const users = require("./../data/user");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
+
 async function addUser(user) {
   return users.addUser(user);
 }
