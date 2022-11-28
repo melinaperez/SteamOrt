@@ -61,14 +61,31 @@ async function findUser(email, password) {
 async function addPurchase(email, game) {
   console.log(game);
   const connectiondb = await conn.getConnection();
-  const user = await connectiondb
+  const user = null;
+  const userExiste = await connectiondb
     .db(DATABASE)
     .collection(USER)
-    .findOneAndUpdate(
-      { email: email },
-      { $push: { purchases: { game, vecesJugadas: 0 } } }
-    );
+    .findOne({ email: email });
 
+  if (userExiste) {
+    let purchases = userExiste.purchases;
+    const gameExiste = await connectiondb
+      .db(DATABASE)
+      .collection(USER)
+      .findOne({ game: purchases.game });
+
+    if (!gameExiste) {
+      user = await connectiondb
+        .db(DATABASE)
+        .collection(USER)
+        .findOneAndUpdate(
+          { email: email },
+          { $push: { purchases: { game, vecesJugadas: 0 } } }
+        );
+    } else {
+      throw new Error("El juego ya fue comprado");
+    }
+  }
   return user;
 }
 

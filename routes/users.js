@@ -64,7 +64,6 @@ router.put("/playGame", auth, async (req, res) => {
     res.json(await controller.playGame(email, gameName));
   } catch (error) {
     res.status(400).send({ error: error.message });
-    console.log(error.message);
   }
 });
 module.exports = router;
