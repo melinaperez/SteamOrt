@@ -25,4 +25,9 @@ router.get("/gamesById/:id", async (req, res) => {
   res.json(await controller.getGameById(id));
 });
 
+router.get("/gamesByName/:name", async (req, res) => {
+  const name = req.params.name;
+  res.json(await controller.getGameByName(name));
+});
+
 module.exports = router;

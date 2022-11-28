@@ -24,6 +24,19 @@ async function getGameById(id) {
   return game[0];
 }
 
+async function getGameByName(name) {
+  const connectiondb = await conn.getConnection();
+  const games = await connectiondb
+    .db(DATABASE)
+    .collection(GAMES)
+    .find({})
+    .toArray();
+
+  const gamesFilter = games.filter((game) => game.name === name);
+
+  return gamesFilter;
+}
+
 async function getGameByPlatform(platform) {
   const connectiondb = await conn.getConnection();
   const games = await connectiondb
@@ -87,4 +100,5 @@ module.exports = {
   getGameByCategory,
   getGameByGenre,
   getGameById,
+  getGameByName,
 };

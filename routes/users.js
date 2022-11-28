@@ -43,14 +43,28 @@ router.put("/addPurchase", auth, async (req, res) => {
 
   res.status(200).json(purchase);
 });
+
+router.get("/myGames", auth, async (req, res) => {
+  try {
+    const email = req.headers.email;
+    res.json(await controller.myGames(email));
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
 router.put("/playGame", auth, async (req, res) => {
   try {
     const email = req.body.email;
     const gameName = req.body.gameName;
 
+    console.log(email);
+    console.log(gameName);
+
     res.json(await controller.playGame(email, gameName));
   } catch (error) {
     res.status(400).send({ error: error.message });
+    console.log(error.message);
   }
 });
 module.exports = router;

@@ -23,6 +23,11 @@ function generatedToken(user) {
 async function addPurchase(email, game) {
   return users.addPurchase(email, game);
 }
+
+async function myGames(email) {
+  return users.myGames(email);
+}
+
 async function playGame(email, gameName) {
   return users.playGame(email, gameName);
 }
@@ -31,5 +36,6 @@ module.exports = {
   findUser,
   generatedToken,
   addPurchase,
+  myGames,
   playGame,
 };

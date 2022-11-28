@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const conn = require("./conn");
 const DATABASE = "SteamOrt";
 const USER = "Users";
+const gamesUser = require("./games");
 
 async function addUser(user) {
   console.log(user);
@@ -71,15 +72,42 @@ async function addPurchase(email, game) {
   return user;
 }
 
+async function myGames(email) {
+  const connectiondb = await conn.getConnection();
+  const user = await connectiondb
+    .db(DATABASE)
+    .collection(USER)
+    .findOne({ email: email });
+  if (user && user.purchases.length != 0) {
+    const purchases = user.purchases;
+    let myGames = [];
+    for (let index = 0; index < purchases.length; index++) {
+      let purchase = purchases[index];
+      let vecesJugadas = purchase.vecesJugadas;
+      let gameAux = await gamesUser.getGameByName(purchase.game);
+
+      let game = {
+        name: gameAux[0].name,
+        image: gameAux[0].image,
+        vecesJugadas: vecesJugadas,
+      };
+      myGames.push(game);
+    }
+    return myGames;
+  } else {
+    throw new Error("El usuario no posee juegos");
+  }
+}
+
 async function playGame(email, gameName) {
   const connectiondb = await conn.getConnection();
   const user = await connectiondb
     .db(DATABASE)
     .collection(USER)
     .findOne({ email: email });
+
   if (user.purchases.length != 0) {
-    user.purchases.find((purchase) => purchase.game.name == gameName)
-      .vecesJugadas++;
+    user.purchases.find((purchase) => purchase.game == gameName).vecesJugadas++;
     return await connectiondb
       .db(DATABASE)
       .collection(USER)
@@ -93,5 +121,6 @@ module.exports = {
   addUser,
   findUser,
   addPurchase,
+  myGames,
   playGame,
 };
