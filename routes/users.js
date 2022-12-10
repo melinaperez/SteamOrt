@@ -39,9 +39,13 @@ router.put("/addPurchase", auth, async (req, res) => {
   const email = req.body.email;
   const game = req.body.game; //Si se complica especificar info es por aca
 
-  const purchase = await controller.addPurchase(email, game);
+  try {
+    const purchase = await controller.addPurchase(email, game);
 
-  res.status(200).json(purchase);
+    res.status(200).json(purchase);
+  } catch (error) {
+    res.send({ error: error.message });
+  }
 });
 
 router.get("/myGames", auth, async (req, res) => {
@@ -49,6 +53,8 @@ router.get("/myGames", auth, async (req, res) => {
     const email = req.headers.email;
     res.json(await controller.myGames(email));
   } catch (error) {
+    console.log("Estoy en el catch");
+    console.log(error);
     res.status(400).send({ error: error.message });
   }
 });

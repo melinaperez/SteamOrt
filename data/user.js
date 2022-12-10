@@ -78,19 +78,22 @@ async function addPurchase(email, game) {
     //   .findOne({ game: purchases.game });
     // console.log("JUEGO A COMPRAR: ");
     console.log(gameExiste);
-
-    if (gameExiste) {
-      userExiste = await connectiondb
-        .db(DATABASE)
-        .collection(USER)
-        .findOneAndUpdate(
-          { email: email },
-          { $push: { purchases: { game, vecesJugadas: 0 } } }
-        );
-      return userExiste;
-    } else {
-      throw new Error("El juego ya fue comprado");
-    }
+    //Verifico si el usuario ya tiene el juego
+    console.log("Juegos del usuario");
+    console.log(userExiste.purchases);
+    userExiste.purchases.map((userGame) => {
+      if (userGame.game === game) {
+        throw new Error("Ya tienes este juego");
+      }
+    });
+    userExiste = await connectiondb
+      .db(DATABASE)
+      .collection(USER)
+      .findOneAndUpdate(
+        { email: email },
+        { $push: { purchases: { game, vecesJugadas: 0 } } }
+      );
+    return userExiste;
   } else if (!userExiste) {
     throw new Error("Usuario inexistente");
   } else {
