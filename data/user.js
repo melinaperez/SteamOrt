@@ -61,32 +61,44 @@ async function findUser(email, password) {
 async function addPurchase(email, game) {
   console.log(game);
   const connectiondb = await conn.getConnection();
-  const user = null;
-  const userExiste = await connectiondb
+
+  let userExiste = await connectiondb
     .db(DATABASE)
     .collection(USER)
     .findOne({ email: email });
+  const gameExiste = await gamesUser.getGameByName(game);
 
-  if (userExiste) {
-    let purchases = userExiste.purchases;
-    const gameExiste = await connectiondb
+  if (userExiste && gameExiste) {
+    console.log("USUARIO QUE COMPRO");
+    console.log(userExiste);
+    // let purchases = userExiste.purchases;
+    // const gameExiste = await connectiondb
+    //   .db(DATABASE)
+    //   .collection(USER)
+    //   .findOne({ game: purchases.game });
+    // console.log("JUEGO A COMPRAR: ");
+    console.log(gameExiste);
+    //Verifico si el usuario ya tiene el juego
+    console.log("Juegos del usuario");
+    console.log(userExiste.purchases);
+    userExiste.purchases.map((userGame) => {
+      if (userGame.game === game) {
+        throw new Error("Ya tienes este juego");
+      }
+    });
+    userExiste = await connectiondb
       .db(DATABASE)
       .collection(USER)
-      .findOne({ game: purchases.game });
-
-    if (!gameExiste) {
-      user = await connectiondb
-        .db(DATABASE)
-        .collection(USER)
-        .findOneAndUpdate(
-          { email: email },
-          { $push: { purchases: { game, vecesJugadas: 0 } } }
-        );
-    } else {
-      throw new Error("El juego ya fue comprado");
-    }
+      .findOneAndUpdate(
+        { email: email },
+        { $push: { purchases: { game, vecesJugadas: 0 } } }
+      );
+    return userExiste;
+  } else if (!userExiste) {
+    throw new Error("Usuario inexistente");
+  } else {
+    throw new Error("El juego no existe");
   }
-  return user;
 }
 
 async function myGames(email) {
