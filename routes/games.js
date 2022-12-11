@@ -30,4 +30,8 @@ router.get("/gamesByName/:name", async (req, res) => {
   res.json(await controller.getGameByName(name));
 });
 
+router.get("/genres", async (req, res) => {
+  res.json(await controller.getGenres());
+});
+
 module.exports = router;

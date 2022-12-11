@@ -94,6 +94,27 @@ async function getGameByGenre(genre) {
   return gamesFilter;
 }
 
+async function getGenres() {
+  const connectiondb = await conn.getConnection();
+  const games = await connectiondb
+    .db(DATABASE)
+    .collection(GAMES)
+    .find({})
+    .toArray();
+
+  const genresAux = [];
+
+  games.map((game) =>
+    game.genres.map((genre) => {
+      if (genresAux.filter((gen) => gen.id === genre.id).length === 0) {
+        genresAux.push(genre);
+      }
+    })
+  );
+
+  return genresAux;
+}
+
 module.exports = {
   getAllGames,
   getGameByPlatform,
@@ -101,4 +122,5 @@ module.exports = {
   getGameByGenre,
   getGameById,
   getGameByName,
+  getGenres,
 };

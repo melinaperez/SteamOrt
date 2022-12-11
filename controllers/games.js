@@ -23,6 +23,10 @@ async function getGameByName(name) {
   return games.getGameByName(name);
 }
 
+async function getGenres() {
+  return games.getGenres();
+}
+
 module.exports = {
   getAllGames,
   getGameByPlatform,
@@ -30,4 +34,5 @@ module.exports = {
   getGameByGenre,
   getGameById,
   getGameByName,
+  getGenres,
 };
