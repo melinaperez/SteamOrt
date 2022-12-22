@@ -17,6 +17,7 @@ function generatedToken(user) {
     process.env.CLAVESECRETA,
     { expiresIn: "1h" }
   );
+  console.log(jwt.decode(token));
   return token;
 }
 

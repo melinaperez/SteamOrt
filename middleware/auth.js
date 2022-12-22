@@ -4,11 +4,17 @@ dotenv.config();
 
 function auth(req, res, next) {
   try {
+    console.log("PASO POR AUTH");
     let token = req.header("Authorization");
     const user = jwt.verify(token, process.env.CLAVESECRETA);
     next();
   } catch (error) {
-    res.status(401).send({ error: error.message });
+    console.log("NO ESTA AUTORIZADO");
+    res
+      .status(401)
+      .send({
+        error: "Debe iniciar sesión para poder acceder a este apartado",
+      });
   }
 }
 
